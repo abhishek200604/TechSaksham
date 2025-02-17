@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Record Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+            background: linear-gradient(135deg, #f22727, #7b00ff);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            width: 90%;
+            max-width: 600px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            color: white;
+        }
+        input, button {
+            display: block;
+            margin: 10px auto;
+            padding: 10px;
+            width: 80%;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            background: #00ccff;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.3s;
+        }
+        button:hover {
+            background: #e64a19;
+            transform: scale(1.05);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            color: white;
+        }
+        th {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        .background-animation {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: url('https://www.transparenttextures.com/patterns/dark-wood.png');
+            animation: moveBackground 15s linear infinite;
+        }
+        @keyframes moveBackground {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-100%); }
+        }
+    </style>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-analytics.js";
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyCX8d0EdaHrPYJtdThRLvtlrlbRANzIa-g",
+            authDomain: "student-record-managemen-d2676.firebaseapp.com",
+            projectId: "student-record-managemen-d2676",
+            storageBucket: "student-record-managemen-d2676.appspot.com",
+            messagingSenderId: "873607829618",
+            appId: "1:873607829618:web:062e8c358184036754caeb",
+            measurementId: "G-H9EV1P3DJ4"
+        };
+        
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+    </script>
+</head>
+<body>
+    <div class="background-animation"></div>
+    <div class="container">
+        <h2>Student Record Management</h2>
+        <input type="text" id="studentId" placeholder="Student ID">
+        <input type="text" id="studentName" placeholder="Name">
+        <input type="number" id="studentAge" placeholder="Age">
+        <input type="text" id="studentGrade" placeholder="Grade">
+        <button onclick="addStudent()">Add Student</button>
+        
+        <h3>Search Student</h3>
+        <input type="text" id="searchId" placeholder="Enter Student ID">
+        <button onclick="searchStudent()">Search</button>
+        
+        <h3>Students List</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Age</th>
+                    <th>Grade</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="studentTable"></tbody>
+        </table>
+    </div>
+    
+    <script>
+        let students = {};
+
+        function addStudent() {
+            let id = document.getElementById('studentId').value;
+            let name = document.getElementById('studentName').value;
+            let age = document.getElementById('studentAge').value;
+            let grade = document.getElementById('studentGrade').value;
+            
+            if (id && name && age && grade) {
+                students[id] = { name, age, grade };
+                displayStudents();
+                document.getElementById('studentId').value = '';
+                document.getElementById('studentName').value = '';
+                document.getElementById('studentAge').value = '';
+                document.getElementById('studentGrade').value = '';
+            } else {
+                alert("Please fill in all fields.");
+            }
+        }
+
+        function displayStudents() {
+            let table = document.getElementById('studentTable');
+            table.innerHTML = '';
+            for (let id in students) {
+                let student = students[id];
+                table.innerHTML += `<tr>
+                    <td>${id}</td>
+                    <td>${student.name}</td>
+                    <td>${student.age}</td>
+                    <td>${student.grade}</td>
+                    <td>
+                        <button onclick="updateStudent('${id}')">Edit</button>
+                        <button onclick="deleteStudent('${id}')">Delete</button>
+                    </td>
+                </tr>`;
+            }
+        }
+        
+        function searchStudent() {
+            let searchId = document.getElementById('searchId').value;
+            if (students[searchId]) {
+                alert(`ID: ${searchId}, Name: ${students[searchId].name}, Age: ${students[searchId].age}, Grade: ${students[searchId].grade}`);
+            } else {
+                alert("Student not found.");
+            }
+        }
+    </script>
+</body>
+</html>
